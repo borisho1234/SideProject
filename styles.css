@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+body {
+    font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif;
+}
+
+.demo-banner {
+    background: repeating-linear-gradient(45deg, #fefce8, #fefce8 10px, #fef08c 10px, #fef08c 20px);
+}
+
+.nav-tab {
+    transition: all 0.2s ease;
+}
+
+.nav-tab.active {
+    color: #003087;
+    border-bottom: 3px solid #003087;
+    font-weight: 600;
+}
+
+.modern-card {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+}
+
+.amount-display {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+
+.transaction-row {
+    transition: background-color 0.1s ease;
+}
+
+.transaction-row:hover {
+    background-color: #f8fafc;
+}
+
+.modal {
+    animation: modalEnter 0.2s ease-out forwards;
+}
+
+@keyframes modalEnter {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.section-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1e2937;
+}

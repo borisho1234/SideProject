@@ -3,168 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>模擬銀行轉帳系統 | Demo</title>
+    <title>DemoBank - 模擬銀行轉帳系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-zinc-50">
-    <!-- Demo Banner -->
-    <div class="demo-banner py-2 text-center text-xs font-medium text-amber-700 border-b border-amber-200">
-        <i class="fas fa-flask mr-1.5"></i>
-        <span>DEMO VERSION — 此為模擬系統，不涉及真實金錢轉帳</span>
+
+    <!-- ==================== 登入 / 註冊頁面 ==================== -->
+    <div id="loginPage" class="min-h-screen bg-gradient-to-br from-[#003087] to-[#002266] flex items-center justify-center">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-[#003087] rounded-2xl mx-auto flex items-center justify-center mb-4">
+                    <span class="text-white text-3xl font-bold">DB</span>
+                </div>
+                <h1 class="text-3xl font-bold">DemoBank</h1>
+                <p class="text-zinc-500 mt-1">歡迎回來</p>
+            </div>
+
+            <!-- 登入 / 註冊切換 -->
+            <div class="flex mb-6 border-b">
+                <button onclick="showLoginForm()" id="loginTab"
+                        class="flex-1 py-3 font-medium border-b-2 border-[#003087] text-[#003087]">登入</button>
+                <button onclick="showRegisterForm()" id="registerTab"
+                        class="flex-1 py-3 font-medium text-zinc-500">註冊</button>
+            </div>
+
+            <!-- 登入表單 -->
+            <form id="loginForm" class="space-y-5">
+                <div>
+                    <label class="block text-sm text-zinc-600 mb-1.5">用戶名稱</label>
+                    <input type="text" id="loginUsername" value="boris" 
+                           class="w-full px-4 py-3 border border-zinc-300 rounded-2xl focus:outline-none focus:border-[#003087]">
+                </div>
+                <div>
+                    <label class="block text-sm text-zinc-600 mb-1.5">密碼</label>
+                    <div class="relative">
+                        <input type="password" id="loginPassword" value="123456" 
+                               class="w-full px-4 py-3 border border-zinc-300 rounded-2xl focus:outline-none focus:border-[#003087]">
+                        <button type="button" onclick="togglePassword('loginPassword', this)" 
+                                class="absolute right-4 top-3.5 text-zinc-400 hover:text-zinc-600">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-[#003087] hover:bg-[#002266] text-white py-4 rounded-2xl font-semibold">
+                    登入
+                </button>
+            </form>
+
+            <!-- 註冊表單 -->
+            <form id="registerForm" class="space-y-5 hidden">
+                <div>
+                    <label class="block text-sm text-zinc-600 mb-1.5">用戶名稱</label>
+                    <input type="text" id="registerUsername" class="w-full px-4 py-3 border border-zinc-300 rounded-2xl focus:outline-none focus:border-[#003087]">
+                </div>
+                <div>
+                    <label class="block text-sm text-zinc-600 mb-1.5">密碼</label>
+                    <input type="password" id="registerPassword" class="w-full px-4 py-3 border border-zinc-300 rounded-2xl focus:outline-none focus:border-[#003087]">
+                </div>
+                <div>
+                    <label class="block text-sm text-zinc-600 mb-1.5">確認密碼</label>
+                    <input type="password" id="confirmPassword" class="w-full px-4 py-3 border border-zinc-300 rounded-2xl focus:outline-none focus:border-[#003087]">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-semibold">
+                    註冊新帳戶
+                </button>
+            </form>
+        </div>
     </div>
 
-    <!-- Top Navigation -->
-    <nav class="bg-white border-b sticky top-0 z-40">
-        <div class="max-w-3xl mx-auto px-4">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center gap-x-3">
-                    <div class="flex items-center gap-x-2.5">
-                        <div class="w-9 h-9 bg-[#003087] rounded-2xl flex items-center justify-center">
-                            <span class="text-white font-bold text-2xl tracking-tighter">DB</span>
+    <!-- ==================== 主應用程式 ==================== -->
+    <div id="mainApp" class="hidden">
+        <!-- Header -->
+        <nav class="bg-white border-b sticky top-0 z-40">
+            <div class="max-w-3xl mx-auto px-4">
+                <div class="flex items-center justify-between h-16">
+                    <!-- 帳戶切換器 -->
+                    <div class="flex items-center gap-x-3">
+                        <div class="relative">
+                            <button onclick="toggleAccountSwitcher()" 
+                                    class="flex items-center gap-x-2 px-4 py-2 bg-white border border-zinc-200 rounded-2xl text-sm hover:border-[#003087] transition">
+                                <div class="text-left">
+                                    <div id="currentAccountName" class="font-medium">主要往來帳戶</div>
+                                    <div id="currentAccountNumber" class="text-[10px] text-zinc-400 font-mono">123-456789-001</div>
+                                </div>
+                                <i class="fas fa-chevron-down text-zinc-400 text-xs"></i>
+                            </button>
+                            <div id="accountSwitcher" class="hidden absolute top-full left-0 mt-2 w-72 bg-white border border-zinc-200 rounded-2xl shadow-lg z-50 py-2"></div>
                         </div>
-                        <div>
-                            <span class="font-semibold text-xl tracking-tight">DemoBank</span>
-                            <span class="text-[10px] text-zinc-400 font-medium block -mt-1">香港</span>
-                        </div>
                     </div>
-                </div>
-                
-                <div class="flex items-center gap-x-2 text-sm">
-                    <div class="px-3 py-1.5 bg-zinc-100 rounded-2xl text-xs flex items-center gap-x-1.5">
-                        <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                        <span class="font-medium text-zinc-600">Demo Mode</span>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-sm font-medium">何先生</div>
-                        <div class="text-[10px] text-zinc-400 -mt-0.5">Boris Ho</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
 
-    <div class="max-w-3xl mx-auto px-4 pt-5 pb-20">
-        <!-- Account Overview -->
-        <div class="modern-card bg-white rounded-3xl border border-zinc-200 mb-6 overflow-hidden">
-            <div class="px-6 pt-5 pb-4 bg-gradient-to-br from-[#003087] to-[#002266] text-white">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="text-blue-200 text-xs tracking-wider">主要往來帳戶</div>
-                        <div class="font-mono text-xl tracking-[2.5px] mt-1">123-456789-001</div>
-                        <div class="text-blue-200 text-xs mt-0.5">何承熹</div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-blue-200 text-xs">可用餘額</div>
-                        <div id="balance" class="amount-display text-4xl font-semibold tracking-tighter mt-0.5">52,800.00</div>
-                        <div class="text-blue-200 text-xs -mt-0.5">HKD</div>
+                    <div class="flex items-center gap-x-4">
+                        <!-- 每日限額狀態 -->
+                        <div onclick="showDailyLimitDetail()" 
+                             class="flex items-center gap-x-1.5 px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 rounded-2xl cursor-pointer text-xs transition">
+                            <i class="fas fa-wallet text-[#003087]"></i>
+                            <span id="headerDailyUsed">0</span>
+                            <span class="text-zinc-400">/ 100k</span>
+                        </div>
+
+                        <div class="text-sm font-medium">何先生</div>
+                        <button onclick="logout()" 
+                                class="text-xs px-3 py-1.5 bg-red-100 text-red-600 hover:bg-red-200 rounded-xl font-medium">登出</button>
                     </div>
                 </div>
             </div>
-            
-            <div class="px-6 py-3 flex items-center justify-between text-xs bg-white">
-                <div class="flex items-center gap-x-4 text-emerald-600">
-                    <div class="flex items-center gap-x-1">
-                        <i class="fas fa-shield-alt"></i>
-                        <span class="font-medium text-xs">雙重驗證已啟用</span>
-                    </div>
-                </div>
-                <button onclick="showAccountModal()" class="text-zinc-400 hover:text-zinc-600 flex items-center gap-x-1 text-xs">
-                    <span>帳戶詳情</span>
-                    <i class="fas fa-chevron-right text-[10px]"></i>
+        </nav>
+
+        <div class="max-w-3xl mx-auto px-4 pt-5 pb-20">
+            <!-- Tab Navigation -->
+            <div class="flex border-b mb-5">
+                <button onclick="switchTab(0)" id="tab-0" 
+                        class="nav-tab active flex-1 py-3 text-sm font-medium flex items-center justify-center gap-x-2 border-b-2 border-[#003087]">
+                    <i class="fas fa-home"></i><span>總覽</span>
+                </button>
+                <button onclick="switchTab(1)" id="tab-1" 
+                        class="nav-tab flex-1 py-3 text-sm font-medium flex items-center justify-center gap-x-2 text-zinc-500">
+                    <i class="fas fa-paper-plane"></i><span>轉帳</span>
+                </button>
+                <button onclick="switchTab(2)" id="tab-2" 
+                        class="nav-tab flex-1 py-3 text-sm font-medium flex items-center justify-center gap-x-2 text-zinc-500">
+                    <i class="fas fa-history"></i><span>記錄</span>
+                </button>
+                <button onclick="switchTab(3)" id="tab-3" 
+                        class="nav-tab flex-1 py-3 text-sm font-medium flex items-center justify-center gap-x-2 text-zinc-500">
+                    <i class="fas fa-cog"></i><span>設定</span>
                 </button>
             </div>
-        </div>
 
-        <!-- Tab Navigation -->
-        <div class="flex border-b mb-5">
-            <button onclick="switchTab(0)" id="tab-0" class="nav-tab active flex-1 py-3 text-sm font-medium flex items-center justify-center gap-x-2 border-b-2 border-[#003087]">
-                <i class="fas fa-paper-plane"></i><span>轉帳</span>
-            </button>
-            <button onclick="switchTab(1)" id="tab-1" class="nav-tab flex-1 py-3 text-sm font-medium flex items-center justify-center gap-x-2 text-zinc-500 hover:text-zinc-700">
-                <i class="fas fa-history"></i><span>交易記錄</span>
-            </button>
-            <button onclick="switchTab(2)" id="tab-2" class="nav-tab flex-1 py-3 text-sm font-medium flex items-center justify-center gap-x-2 text-zinc-500 hover:text-zinc-700">
-                <i class="fas fa-cog"></i><span>設定</span>
-            </button>
-        </div>
-
-        <!-- Tab 0: Transfer -->
-        <div id="tab-content-0">
-            <div class="modern-card bg-white rounded-3xl border border-zinc-200 p-6 mb-6">
-                <h2 class="text-xl font-semibold mb-5 flex items-center gap-x-2">
-                    <i class="fas fa-paper-plane text-[#003087]"></i>
-                    <span>轉帳至其他帳戶</span>
-                </h2>
-                <form id="transferForm" class="space-y-5">
-                    <div>
-                        <label class="block text-sm font-medium text-zinc-700 mb-2">常用收款人</label>
-                        <div class="flex flex-wrap gap-2" id="favoriteList"></div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">收款人帳號 <span class="text-red-500">*</span></label>
-                        <input type="text" id="recipientAccount" class="w-full px-4 py-3 border border-zinc-300 rounded-2xl text-base focus:outline-none focus:border-[#003087]" placeholder="例如：987-654321-002" required>
-                        <p id="accountError" class="text-red-500 text-xs mt-1 hidden"></p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">收款人姓名 <span class="text-red-500">*</span></label>
-                        <input type="text" id="recipientName" class="w-full px-4 py-3 border border-zinc-300 rounded-2xl text-base focus:outline-none focus:border-[#003087]" placeholder="例如：張美玲" required>
-                        <p id="nameError" class="text-red-500 text-xs mt-1 hidden"></p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">轉帳金額 (HKD) <span class="text-red-500">*</span></label>
-                        <input type="number" id="amount" step="0.01" min="1" class="w-full px-4 py-3 border border-zinc-300 rounded-2xl text-2xl font-semibold focus:outline-none focus:border-[#003087]" placeholder="0.00" required>
-                        <div class="flex flex-wrap gap-2 mt-3">
-                            <button type="button" onclick="quickAmount(500)" class="px-4 py-1.5 text-xs bg-zinc-100 hover:bg-zinc-200 rounded-2xl">HK$500</button>
-                            <button type="button" onclick="quickAmount(1000)" class="px-4 py-1.5 text-xs bg-zinc-100 hover:bg-zinc-200 rounded-2xl">HK$1,000</button>
-                            <button type="button" onclick="quickAmount(2000)" class="px-4 py-1.5 text-xs bg-zinc-100 hover:bg-zinc-200 rounded-2xl">HK$2,000</button>
-                            <button type="button" onclick="quickAmount(5000)" class="px-4 py-1.5 text-xs bg-zinc-100 hover:bg-zinc-200 rounded-2xl">HK$5,000</button>
-                        </div>
-                        <p id="amountError" class="text-red-500 text-xs mt-1 hidden"></p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">備註 (選填)</label>
-                        <textarea id="note" rows="2" class="w-full px-4 py-3 border border-zinc-300 rounded-2xl text-sm" placeholder="例如：家庭生活費、租金"></textarea>
-                    </div>
-                    <button type="submit" class="w-full bg-[#003087] hover:bg-[#002266] text-white font-semibold py-4 rounded-2xl flex items-center justify-center gap-x-2">
-                        <i class="fas fa-paper-plane"></i>
-                        <span>確認轉帳</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Tab 1: History -->
-        <div id="tab-content-1" class="hidden">
-            <div class="modern-card bg-white rounded-3xl border border-zinc-200 p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold">交易記錄</h2>
-                    <button onclick="exportToCSV()" class="px-4 py-2 text-sm bg-white border border-zinc-300 hover:bg-zinc-50 rounded-2xl flex items-center gap-1">
-                        <i class="fas fa-download"></i> CSV
-                    </button>
+            <!-- ==================== 總覽頁 ==================== -->
+            <div id="tab-content-0">
+                <div class="bg-white rounded-3xl border border-zinc-200 p-6 mb-6 text-center">
+                    <div class="text-zinc-500 text-sm">目前餘額</div>
+                    <div id="balance" class="text-5xl font-bold tracking-tighter mt-1">52,800.00</div>
+                    <div class="text-xs text-zinc-400">HKD</div>
                 </div>
-                <div id="historyList" class="divide-y divide-zinc-100 text-sm max-h-[450px] overflow-auto"></div>
-            </div>
-        </div>
 
-        <!-- Tab 2: Settings -->
-        <div id="tab-content-2" class="hidden">
-            <div class="modern-card bg-white rounded-3xl border border-zinc-200 p-6">
-                <h2 class="text-xl font-semibold mb-6">設定</h2>
-                <div class="text-sm text-zinc-600">
-                    <p>Demo 版本 - 完整設定頁面可於正式版本中加入</p>
+                <!-- Dashboard 每日限額 -->
+                <div class="bg-white rounded-3xl border border-zinc-200 p-6 mb-6">
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="font-semibold">今日轉帳限額</div>
+                        <button onclick="resetDailyLimit()" class="text-xs px-3 py-1 bg-zinc-100 hover:bg-zinc-200 rounded-xl">重置今日</button>
+                    </div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span id="dashboardDailyText">HK$ 0 / 100,000</span>
+                        <span id="dashboardDailyPercent">0%</span>
+                    </div>
+                    <div class="w-full bg-zinc-100 rounded-full h-3">
+                        <div id="dashboardDailyBar" class="h-3 rounded-full transition-all" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 轉帳頁 ==================== -->
+            <div id="tab-content-1" class="hidden">
+                <!-- 每日限額 -->
+                <div class="mb-6 p-5 bg-white border border-zinc-200 rounded-3xl">
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-zinc-600">今日轉帳限額</span>
+                        <span id="dailyLimitText" class="font-medium">HK$ 0 / 100,000</span>
+                    </div>
+                    <div class="w-full bg-zinc-100 rounded-full h-3">
+                        <div id="dailyLimitBar" class="h-3 rounded-full transition-all" style="width: 0%"></div>
+                    </div>
+                    <div id="dailyLimitRemaining" class="text-xs text-emerald-600 mt-1">剩餘可轉：HK$ 100,000</div>
+                </div>
+
+                <!-- 轉帳表單 -->
+                <div class="bg-white rounded-3xl border border-zinc-200 p-6">
+                    <h2 class="text-xl font-semibold mb-5">轉帳至其他帳戶</h2>
+                    <form id="transferForm" class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-700 mb-2">常用收款人</label>
+                            <div class="flex flex-wrap gap-2" id="favoriteList"></div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">收款人帳號 <span class="text-red-500">*</span></label>
+                            <input type="text" id="recipientAccount" class="w-full px-4 py-3 border border-zinc-300 rounded-2xl focus:outline-none focus:border-[#003087]" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">收款人姓名 <span class="text-red-500">*</span></label>
+                            <input type="text" id="recipientName" class="w-full px-4 py-3 border border-zinc-300 rounded-2xl focus:outline-none focus:border-[#003087]" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">轉帳金額 (HKD) <span class="text-red-500">*</span></label>
+                            <input type="number" id="amount" step="0.01" class="w-full px-4 py-3 border border-zinc-300 rounded-2xl text-2xl font-semibold focus:outline-none focus:border-[#003087]" required>
+                            <div class="flex gap-2 mt-2">
+                                <button type="button" onclick="quickAmount(500)" class="px-3 py-1 text-xs bg-zinc-100 rounded-2xl">500</button>
+                                <button type="button" onclick="quickAmount(1000)" class="px-3 py-1 text-xs bg-zinc-100 rounded-2xl">1,000</button>
+                                <button type="button" onclick="quickAmount(5000)" class="px-3 py-1 text-xs bg-zinc-100 rounded-2xl">5,000</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-700 mb-1.5">備註</label>
+                            <textarea id="note" rows="2" class="w-full px-4 py-3 border border-zinc-300 rounded-2xl"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-[#003087] hover:bg-[#002266] text-white font-semibold py-4 rounded-2xl">
+                            確認轉帳
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ==================== 交易記錄頁 ==================== -->
+            <div id="tab-content-2" class="hidden">
+                <div class="bg-white rounded-3xl border border-zinc-200 p-6">
+                    <div class="flex justify-between mb-4">
+                        <h2 class="text-xl font-semibold">交易記錄</h2>
+                        <button onclick="exportToCSV()" class="px-4 py-2 text-sm bg-white border border-zinc-300 rounded-2xl">匯出 CSV</button>
+                    </div>
+                    <div id="historyList" class="max-h-[500px] overflow-auto divide-y"></div>
+                </div>
+            </div>
+
+            <!-- ==================== 設定頁 ==================== -->
+            <div id="tab-content-3" class="hidden">
+                <div class="bg-white rounded-3xl border border-zinc-200 p-6">
+                    <h2 class="text-xl font-semibold mb-6">設定</h2>
+                    <div>
+                        <label class="block text-sm text-zinc-600 mb-2">每日轉帳限額</label>
+                        <div class="flex gap-3">
+                            <input type="number" id="dailyLimitInput" value="100000" 
+                                   class="flex-1 px-4 py-3 border border-zinc-300 rounded-2xl text-lg focus:outline-none focus:border-[#003087]">
+                            <button onclick="updateDailyLimit()" class="px-6 py-3 bg-[#003087] text-white rounded-2xl font-medium">更新</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- ==================== Modals ==================== -->
 
     <!-- Confirmation Modal -->
     <div id="confirmModal" class="hidden fixed inset-0 bg-black/60 flex items-end md:items-center justify-center z-50">
         <div class="bg-white w-full max-w-md md:rounded-3xl rounded-t-3xl p-6">
-            <h3 class="text-xl font-semibold mb-1">確認轉帳</h3>
-            <p class="text-sm text-zinc-500 mb-6">請核對以下資料</p>
-            <div class="space-y-4 text-sm">
+            <h3 class="text-xl font-semibold mb-4">確認轉帳</h3>
+            <div class="space-y-3 text-sm">
                 <div class="flex justify-between"><span class="text-zinc-500">收款人</span> <span id="confirmName" class="font-medium"></span></div>
                 <div class="flex justify-between"><span class="text-zinc-500">帳號</span> <span id="confirmAccount" class="font-mono"></span></div>
                 <div class="flex justify-between"><span class="text-zinc-500">金額</span> <span id="confirmAmount" class="font-bold text-red-600"></span></div>
@@ -176,6 +252,20 @@
         </div>
     </div>
 
+    <!-- PIN Modal -->
+    <div id="pinModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+        <div class="bg-white w-full max-w-sm mx-4 rounded-3xl p-8 text-center">
+            <h3 class="text-xl font-semibold mb-2">請輸入交易密碼</h3>
+            <p class="text-sm text-zinc-500 mb-6">為保障資金安全，請輸入 6 位數字</p>
+            <input type="tel" id="pinInput" maxlength="6" inputmode="numeric"
+                   class="w-full text-center text-4xl tracking-[12px] py-4 border border-zinc-300 rounded-2xl focus:outline-none focus:border-[#003087]">
+            <div class="mt-6 flex gap-3">
+                <button onclick="hidePinModal()" class="flex-1 py-3 border rounded-2xl font-medium">取消</button>
+                <button onclick="verifyPin()" class="flex-1 py-3 bg-[#003087] text-white rounded-2xl font-semibold">確認</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Success Modal -->
     <div id="successModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
         <div class="bg-white w-full max-w-md rounded-3xl p-8 text-center">
@@ -183,12 +273,6 @@
                 <i class="fas fa-check text-5xl text-emerald-600"></i>
             </div>
             <h3 class="text-2xl font-bold text-emerald-600">轉帳成功！</h3>
-            <div class="mt-6 text-left bg-zinc-50 rounded-2xl p-5 text-sm space-y-3">
-                <div class="flex justify-between"><span class="text-zinc-500">交易編號</span><span id="successTxnId" class="font-mono text-xs"></span></div>
-                <div class="flex justify-between"><span class="text-zinc-500">收款人</span><span id="successName" class="font-medium"></span></div>
-                <div class="flex justify-between"><span class="text-zinc-500">金額</span><span id="successAmount" class="font-semibold text-red-600"></span></div>
-                <div class="flex justify-between pt-3 border-t"><span class="font-medium">更新後餘額</span><span id="successNewBalance" class="font-bold text-emerald-700"></span></div>
-            </div>
             <button onclick="completeTransfer()" class="mt-8 w-full py-4 bg-emerald-600 text-white rounded-2xl font-semibold">完成</button>
         </div>
     </div>

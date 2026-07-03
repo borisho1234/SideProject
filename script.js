@@ -237,11 +237,30 @@ function handleLogin(e) {
 function handleRegister(e) {
     e.preventDefault();
     const username = document.getElementById('registerUsername').value.trim();
-    const password = document.getElementById('registerPassword').value;
-    const confirm = document.getElementById('confirmPassword').value;
+    const password = document.getElementById('registerPassword').value.trim();
+    const confirm = document.getElementById('confirmPassword').value.trim();
+
+    // 新增：空值驗證
+    if (!username) {
+        alert('用戶名稱不能為空！');
+        return;
+    }
+    if (!password) {
+        alert('密碼不能為空！');
+        return;
+    }
+    if (!confirm) {
+        alert('請確認密碼！');
+        return;
+    }
 
     if (password !== confirm) {
         alert('兩次密碼不一致');
+        return;
+    }
+
+    if (password.length < 4) {
+        alert('密碼至少需要 4 位字符');
         return;
     }
 

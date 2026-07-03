@@ -1,15 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
 
 body {
-    font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif;
+    font-family: 'Inter', 'Noto Sans TC', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+/* Demo Banner */
 .demo-banner {
-    background: repeating-linear-gradient(45deg, #fefce8, #fefce8 10px, #fef08c 10px, #fef08c 20px);
+    background: repeating-linear-gradient(
+        45deg,
+        #fefce8,
+        #fefce8 10px,
+        #fef08c 10px,
+        #fef08c 20px
+    );
 }
 
+/* Tab Navigation */
 .nav-tab {
     transition: all 0.2s ease;
+    position: relative;
 }
 
 .nav-tab.active {
@@ -18,34 +27,125 @@ body {
     font-weight: 600;
 }
 
+/* Card Style */
 .modern-card {
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 
+                0 2px 4px -2px rgb(0 0 0 / 0.05);
+    transition: box-shadow 0.2s ease;
 }
 
+.modern-card:hover {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 
+                0 4px 6px -4px rgb(0 0 0 / 0.05);
+}
+
+/* Amount Display */
 .amount-display {
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
 }
 
+/* Transaction Row */
 .transaction-row {
-    transition: background-color 0.1s ease;
+    transition: background-color 0.15s ease;
 }
 
 .transaction-row:hover {
     background-color: #f8fafc;
 }
 
+/* Modal Animation */
 .modal {
     animation: modalEnter 0.2s ease-out forwards;
 }
 
 @keyframes modalEnter {
-    from { opacity: 0; transform: translateY(20px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
-.section-title {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: #1e2937;
+/* Form Input Focus */
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #003087;
+    box-shadow: 0 0 0 3px rgba(0, 48, 135, 0.1);
+}
+
+/* Button Hover Effects */
+button {
+    transition: all 0.2s ease;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* Account Switcher */
+#accountSwitcher {
+    animation: dropdownEnter 0.15s ease-out forwards;
+}
+
+@keyframes dropdownEnter {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Progress Bar */
+#dailyLimitBar, #dashboardDailyBar {
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* PIN Input */
+#pinInput {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 8px;
+}
+
+/* Toast Notification */
+.toast {
+    animation: toastSlideIn 0.3s ease-out forwards;
+}
+
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+    .amount-display {
+        font-size: 2.25rem;
+    }
+}
+
+/* Scrollbar Styling (for transaction list) */
+#historyList::-webkit-scrollbar {
+    width: 6px;
+}
+
+#historyList::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 3px;
+}
+
+#historyList::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
 }
